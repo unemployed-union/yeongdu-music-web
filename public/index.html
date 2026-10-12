@@ -1,51 +1,219 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#080a10"><meta name="description" content="YeongduMusic는 Google Drive의 음악을 스트리밍하고 필요한 음악은 오프라인으로 다운로드할 수 있는 개인 음악 플레이어입니다.">
-  <link rel="canonical" href="https://music.yeongdu.xyz/"><link rel="icon" type="image/svg+xml" href="/assets/favicon.svg"><link rel="stylesheet" href="/assets/styles.css">
-  <meta property="og:type" content="website"><meta property="og:site_name" content="YeongduMusic"><meta property="og:title" content="YeongduMusic — Your music, your cloud"><meta property="og:description" content="Google Drive에 저장된 음악을 스트리밍하고 필요할 땐 오프라인으로."><meta property="og:url" content="https://music.yeongdu.xyz/">
-  <title>YeongduMusic — Your music, your cloud</title>
-  <script src="/assets/site.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10132b">
+  <meta name="description" content="YeongduMusic - Google Drive에 보관한 음악을 스트리밍하고 오프라인으로 감상하는 개인 음악 플레이어.">
+  <title>YeongduMusic — Your Music, Your Cloud</title>
+  <link rel="canonical" href="https://music.yeongdu.xyz/">
+  <link rel="icon" type="image/png" href="assets/app-icon.png">
+  <link rel="apple-touch-icon" href="assets/app-icon.png">
+
+  <meta property="og:title" content="YeongduMusic">
+  <meta property="og:description" content="내 음악을, 내 방식대로. Google Drive 음악 플레이어.">
+  <meta property="og:image" content="https://music.yeongdu.xyz/assets/app-icon.png">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1125;
+      --panel: #191d38;
+      --border: #ffffff1a;
+      --text: #f4f3ff;
+      --muted: #afb3cf;
+      --pink: #f16b98;
+      --purple: #a38cff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: radial-gradient(ellipse at 80% 0%, #50336355, transparent 45%), var(--bg);
+      line-height: 1.7;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1120px, 90%); margin: auto; }
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px; padding: 25px 0;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 800; }
+    .brand img { width: 42px; height: 42px; border-radius: 11px; }
+    nav { display: flex; flex-wrap: wrap; gap: 22px; }
+    nav a, footer { color: var(--muted); font-size: 14px; }
+    nav a:hover, footer a:hover { color: white; }
+    .hero {
+      display: grid; grid-template-columns: 1.2fr .8fr;
+      align-items: center; gap: 60px; padding: 110px 0 140px;
+    }
+    .eyebrow { color: var(--pink); font-size: 13px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    h1 { font-size: clamp(42px, 6vw, 76px); line-height: 1.15; letter-spacing: -.05em; margin: 18px 0 25px; }
+    h1 span { color: var(--pink); }
+    .lead { color: var(--muted); font-size: 18px; max-width: 540px; }
+    .buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 34px; }
+    .btn {
+      padding: 13px 22px; border-radius: 12px;
+      font-weight: 700; font-size: 14px; border: 1px solid var(--border);
+    }
+    .btn.primary { background: linear-gradient(110deg, #ef719d, #9d85f9); border: none; color: #141326; }
+    .showcase {
+      text-align: center; padding: 40px 25px;
+      border-radius: 28px; border: 1px solid var(--border);
+      background: linear-gradient(145deg, #272342, #111830);
+      box-shadow: 0 30px 80px #0005;
+    }
+    .showcase img { width: min(210px, 70%); border-radius: 45px; box-shadow: 0 20px 50px #0005; }
+    .showcase h3 { margin-bottom: 3px; }
+    .showcase p { margin: 0; color: var(--muted); }
+    .section { padding: 75px 0; }
+    .section h2 { font-size: clamp(28px, 4vw, 42px); line-height: 1.3; margin: 12px 0; }
+    .section-intro { color: var(--muted); margin-bottom: 35px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 20px; padding: 30px;
+    }
+    .card .symbol { font-size: 30px; }
+    .card h3 { font-size: 19px; margin: 18px 0 8px; }
+    .card p { color: var(--muted); font-size: 15px; margin: 0; }
+    .steps { counter-reset: item; }
+    .step-number { font-weight: 800; color: var(--pink); letter-spacing: .12em; }
+    .privacy-box {
+      background: linear-gradient(110deg, #34213e, #202342);
+      border: 1px solid var(--border);
+      border-radius: 24px; padding: 38px; margin: 85px 0;
+    }
+    .privacy-box p { color: var(--muted); }
+    .privacy-box a { color: #ffb5d0; text-decoration: underline; }
+    footer {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 20px;
+      border-top: 1px solid var(--border); padding: 35px 0 45px;
+    }
+    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    @media (max-width: 760px) {
+      .hero { grid-template-columns: 1fr; padding: 65px 0 75px; gap: 35px; }
+      .grid { grid-template-columns: 1fr; }
+      nav { gap: 13px; }
+      .section { padding: 45px 0; }
+    }
+  </style>
 </head>
 <body>
-  <header class="site-header"><div class="container header-inner">
-    <a class="brand" href="/" aria-label="YeongduMusic 홈"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M12 28v9M24 15v34M36 23v18M48 28v9" stroke="#131a29" stroke-width="8" stroke-linecap="round"/></svg></span><span>YeongduMusic</span></a>
-    <button type="button" class="menu-toggle" data-menu-toggle aria-label="메뉴 열기" aria-controls="main-nav" aria-expanded="false">☰</button>
-    <nav class="nav" id="main-nav" data-nav aria-label="주요 메뉴"><a href="#features">주요 기능</a><a href="#how-it-works">사용 방법</a><a href="/privacy/">개인정보처리방침</a><a class="nav-pill" href="/terms/">이용약관 ↗</a></nav>
-  </div></header>
-  <main>
-    <section class="hero"><div class="container hero-grid">
-      <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-dot"></span> Your Music, Your Cloud</div>
-        <h1>내 음악을,<br><span class="gradient-text">내 방식대로.</span></h1>
-        <p class="hero-lead">Google Drive에 보관해 둔 음악을 손쉽게 찾아 듣고, 필요한 곡은 오프라인으로 저장하세요. 나만의 음악 라이브러리를 위한 플레이어, YeongduMusic.</p>
-        <div class="hero-actions"><a class="btn btn-primary" href="#features">주요 기능 알아보기 <span aria-hidden="true">↗</span></a><a class="btn btn-outline" href="/privacy/">개인정보처리방침 <span aria-hidden="true">→</span></a></div>
-        <p class="hero-note">Google 계정으로 연결하는 개인 음악 플레이어 · Android / iOS 앱 프로젝트</p>
-      </div>
-      <div class="hero-graphic"><div class="hero-glow" aria-hidden="true"></div>
-        <div class="player" role="img" aria-label="YeongduMusic의 음악 재생 화면을 표현한 예시 디자인. 실제 앱 스크린샷이 아닙니다.">
-          <div class="player-top"><span class="player-mini-logo"><span class="dot-icon" style="margin-right:26px"></span> YeongduMusic</span><span class="player-status"><span class="status-light"></span> Drive</span></div>
-          <div class="artwork"><div class="artwork-orbit"></div></div>
-          <div class="track-meta"><div><div class="song-title">Quiet Orbit</div><div class="song-artist">Demo Track · Example Artist</div></div><span class="heart" aria-hidden="true">♡</span></div>
-          <div class="seek"><div class="seek-progress"></div></div><div class="timestamps"><span>1:24</span><span>3:26</span></div>
-          <div class="controls" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM18 5v14L9 12z"/></svg><div class="play-button"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></div><svg width="23" height="23" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM6 5v14l9-7z"/></svg></div>
-          <div class="player-bottom"><span>☁ &nbsp; From your Drive</span><span class="flac-badge">FLAC</span></div>
+  <header class="header container">
+    <a class="brand" href="./">
+      <img src="assets/app-icon.png" alt="YeongduMusic 앱 아이콘">
+      <span>YeongduMusic</span>
+    </a>
+    <nav aria-label="주 메뉴">
+      <a href="#features">주요 기능</a>
+      <a href="#how-it-works">사용 방법</a>
+      <a href="privacy/">개인정보처리방침</a>
+      <a href="terms/">이용약관</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Your Music, Your Cloud</div>
+        <h1>내 음악을,<br><span>내 방식대로.</span></h1>
+        <p class="lead">
+          Google Drive에 보관해 둔 음악을 손쉽게 찾아 듣고,
+          필요한 곡은 오프라인으로 저장하세요.
+          나만의 음악 라이브러리를 위한 플레이어, YeongduMusic.
+        </p>
+        <div class="buttons">
+          <a class="btn primary" href="#features">주요 기능 알아보기 ↗</a>
+          <a class="btn" href="privacy/">개인정보처리방침 →</a>
         </div>
-        <div class="floating-badge" aria-hidden="true"><span class="float-symbol">↓</span><span><strong>Listen offline</strong>음악을 기기에 저장</span></div>
       </div>
-    </div></section>
-    <section class="section section-alt" id="features"><div class="container"><div class="section-head"><div class="label-small">What you can do</div><h2>내 라이브러리를 위한<br>필요한 기능들</h2><p class="section-desc">클라우드와 로컬 재생을 연결하는 심플한 음악 경험.</p></div>
-      <div class="feature-grid">
-        <article class="feature-card"><div class="feature-icon"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.8A4.5 4.5 0 0017.5 8a6 6 0 00-11.4 1.8A4.5 4.5 0 006.5 19H18a4 4 0 002-2.2Z"/></svg></div><h3>Google Drive 연동</h3><p>Google 계정을 연결해 Drive에 저장한 음악 파일을 탐색하고 내 음악을 즐길 수 있어요.</p></article>
-        <article class="feature-card"><div class="feature-icon blue"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><h3>음악 스트리밍</h3><p>파일을 미리 내려받지 않아도 음악을 감상할 수 있어요. FLAC 등 고음질 파일을 활용하는 음악 라이브러리를 지향합니다.</p></article>
-        <article class="feature-card"><div class="feature-icon teal"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg></div><h3>오프라인 다운로드</h3><p>다시 듣고 싶은 음악만 선택해 기기에 저장하세요. 네트워크가 불안정한 환경에서도 재생할 수 있어요.</p></article>
+
+      <div class="showcase">
+        <img src="assets/app-icon.png" alt="YeongduMusic 공식 앱 아이콘">
+        <h3>YeongduMusic</h3>
+        <p>Your personal cloud music player</p>
       </div>
-    </div></section>
-    <section class="section" id="how-it-works"><div class="container"><div class="section-head"><div class="label-small">How it works</div><h2>음악을 듣는<br>간단한 세 단계</h2><p class="section-desc">복잡한 라이브러리 이전 없이 내 Google Drive를 활용하세요.</p></div>
-      <div class="how"><div class="step"><div class="step-num">01 / CONNECT</div><h3>계정 연결</h3><p>앱에서 Google 계정으로 로그인하고 필요한 Drive 접근 권한을 승인합니다.</p></div><div class="step"><div class="step-num">02 / EXPLORE</div><h3>음악 찾기</h3><p>Drive에 저장한 음악을 탐색해 재생하고 싶은 곡을 선택합니다.</p></div><div class="step"><div class="step-num">03 / LISTEN</div><h3>자유롭게 재생</h3><p>스트리밍으로 바로 듣거나 원하는 곡을 오프라인용으로 저장합니다.</p></div></div>
-    </div></section>
-    <section class="section section-alt"><div class="container"><div class="notice-panel"><div><div class="label-small" style="margin-bottom:11px">Privacy matters</div><h2>내 데이터에 대한 설명도 투명하게.</h2><p>YeongduMusic가 Google Drive 데이터에 어떻게 접근하고 사용하는지 개인정보처리방침에서 확인할 수 있습니다.</p></div><a class="btn btn-outline" href="/privacy/">처리방침 보기 <span aria-hidden="true">↗</span></a></div></div></section>
+    </section>
+
+    <section id="features" class="section">
+      <div class="eyebrow">What you can do</div>
+      <h2>내 라이브러리를 위한<br>필요한 기능들</h2>
+      <p class="section-intro">클라우드와 로컬 재생을 연결하는 음악 경험.</p>
+
+      <div class="grid">
+        <article class="card">
+          <div class="symbol">☁️</div>
+          <h3>Google Drive 연동</h3>
+          <p>Google 계정을 연결하고 Drive에 저장된 음악 파일을 탐색하세요.</p>
+        </article>
+        <article class="card">
+          <div class="symbol">♫</div>
+          <h3>음악 스트리밍</h3>
+          <p>미리 다운로드하지 않고도 음악을 재생하세요. FLAC 등 고음질 음악 파일을 지원합니다.</p>
+        </article>
+        <article class="card">
+          <div class="symbol">↓</div>
+          <h3>오프라인 다운로드</h3>
+          <p>원하는 음악을 기기에 저장하고 인터넷 연결 없이 감상하세요.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="section">
+      <div class="eyebrow">How it works</div>
+      <h2>음악을 듣는<br>간단한 세 단계</h2>
+      <p class="section-intro">내 Google Drive를 그대로 음악 라이브러리로 활용하세요.</p>
+
+      <div class="grid steps">
+        <article class="card">
+          <div class="step-number">01 / CONNECT</div>
+          <h3>계정 연결</h3>
+          <p>Google 계정으로 로그인하고 필요한 Drive 접근 권한을 승인합니다.</p>
+        </article>
+        <article class="card">
+          <div class="step-number">02 / EXPLORE</div>
+          <h3>음악 찾기</h3>
+          <p>Google Drive에 저장된 음악을 탐색하고 재생할 곡을 선택합니다.</p>
+        </article>
+        <article class="card">
+          <div class="step-number">03 / LISTEN</div>
+          <h3>자유롭게 재생</h3>
+          <p>스트리밍으로 감상하거나 오프라인용으로 다운로드합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="privacy-box">
+      <div class="eyebrow">Privacy matters</div>
+      <h2>내 데이터에 대한 설명도 투명하게.</h2>
+      <p>
+        YeongduMusic가 Google Drive 데이터에 접근하고 사용하는
+        방법은 개인정보처리방침에서 확인할 수 있습니다.
+      </p>
+      <a href="privacy/">개인정보처리방침 확인하기 →</a>
+    </section>
   </main>
-  <footer class="site-footer"><div class="container"><div class="footer-top"><div><a class="brand" href="/"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M12 28v9M24 15v34M36 23v18M48 28v9" stroke="#131a29" stroke-width="8" stroke-linecap="round"/></svg></span><span>YeongduMusic</span></a><p class="footer-brand-text">Your music, your cloud. 나만의 클라우드 음악 플레이어.</p></div><nav aria-label="푸터 메뉴" class="footer-links"><a href="/#features">주요 기능</a><a href="/privacy/">개인정보처리방침</a><a href="/terms/">이용약관</a></nav></div><div class="footer-bottom"><span>© <span data-year>2026</span> YeongduMusic. All rights reserved.</span><span class="footer-contact">문의: CONTACT_EMAIL_HERE</span></div></div></footer>
+
+  <footer class="container">
+    <div>
+      <strong>YeongduMusic</strong>
+      <div>Your music, your cloud.</div>
+      <small>© <span id="year">2026</span> YeongduMusic.</small>
+    </div>
+    <div class="footer-links">
+      <a href="privacy/">개인정보처리방침</a>
+      <a href="terms/">이용약관</a>
+      <a href="mailto:songyw9812@gmail.com">문의</a>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
